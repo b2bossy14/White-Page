@@ -38,7 +38,7 @@ struct ContentView: View {
                 .edgesIgnoringSafeArea(.all)
 
                 VStack {
-                    // Logo and Title
+                    // MARK: - Logo & Directory Name
                     VStack(spacing: 10) {
                         Image("Image") // Replace with an actual image asset name
                             .resizable()
@@ -52,8 +52,8 @@ struct ContentView: View {
                     }
                     .padding(.top, 20)
 
-                    // Search Bar
-                    TextField("Search families", text: $searchText)
+                    // MARK: - Search
+                    TextField("Search", text: $searchText)
                         .textFieldStyle(RoundedBorderTextFieldStyle())
                         .padding()
                         .background(Color.white)
@@ -90,31 +90,45 @@ struct ContentView: View {
                 // Side Menu
                 SideMenu(isShowing: $showMenu, selectedOption: $selectedOption)
             }
-            .toolbar(showMenu ? .hidden : .visible, for: .navigationBar)
-            .navigationTitle("Home")
-            .navigationBarTitleDisplayMode(.inline)
             .toolbar {
-                ToolbarItem(placement: .navigationBarLeading) {
-                    Button(action: {
-                        showMenu.toggle()
-                    }, label: {
-                        Image(systemName: "line.3.horizontal")
-                            .font(.system(size: 25))
-                            .font(.title)
-                            .foregroundColor(.black)
-                    })
+                // Conditionally hide the navigation bar
+                if showMenu {
+                    ToolbarItem(placement: .principal) {
+                        // Empty to effectively hide the navigation title
+                        EmptyView()
+                    }
+                    // Optionally, you can hide other toolbar items if needed
+                } else {
+                    // Show the navigation title and toolbar items
+                    ToolbarItem(placement: .principal) {
+                        Text("Home")
+                            .font(.headline)
+                    }
+
+                    ToolbarItem(placement: .navigationBarLeading) {
+                        Button(action: {
+                            showMenu.toggle()
+                        }, label: {
+                            Image(systemName: "line.3.horizontal")
+                                .font(.system(size: 25))
+                                .foregroundColor(.black)
+                        })
+                    }
                 }
             }
-            .navigationDestination(for: SideMenuOptionModel.self) { option in
+
+            // MARK: - Navigation
+            .navigationDestination(item: $selectedOption) { option in
                 switch option {
                 case .settings:
-                     SettingsView()
+                    SettingsView()
                 case .search:
-                    // Optional: Navigate to the main directory screen or handle as needed.
-                    EmptyView()
+                    EmptyView() 
                 }
             }
+
         }
+        
     }
 
     // Simulate loading delay
@@ -125,6 +139,7 @@ struct ContentView: View {
         }
     }
 }
+
 
 #Preview {
     ContentView()
